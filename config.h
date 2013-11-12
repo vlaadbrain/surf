@@ -5,6 +5,7 @@ static char *useragent      = "Mozilla/5.0 (X11; U; Unix; en-US) "
 static char *stylefile      = "~/.surf/style.css";
 static char *scriptfile     = "~/.surf/script.js";
 static char *cookiefile     = "~/.surf/cookies.txt";
+static char *downloadsdir   = "~/Downloads";
 static time_t sessiontime   = 3600;
 static char *cafile         = "/etc/ssl/certs/ca-certificates.crt";
 static char *strictssl      = FALSE; /* Refuse untrusted SSL connections */
@@ -28,7 +29,7 @@ static Bool allowgeolocation = TRUE;
 
 #define SETPROP(p, q) { \
 	.v = (char *[]){ "/bin/sh", "-c", \
-		"prop=\"`xprop -id $2 $0 | cut -d '\"' -f 2 | xargs -0 printf %b | dmenu`\" &&" \
+		"prop=\"`xprop -id $2 $0 | cut -d '\"' -f 2 | xargs -0 printf %b | dmenu -p 'surf> '`\" &&" \
 		"xprop -id $2 -f $1 8s -set $1 \"$prop\"", \
 		p, q, winid, NULL \
 	} \
@@ -37,13 +38,15 @@ static Bool allowgeolocation = TRUE;
 /* DOWNLOAD(URI, referer) */
 #define DOWNLOAD(d, r) { \
 	.v = (char *[]){ "/bin/sh", "-c", \
-		"st -e /bin/sh -c \"curl -L -J -O --user-agent '$1'" \
+		"st -e /bin/sh -c \"cd $4; curl -L -J -O --user-agent '$1'" \
 		" --referer '$2' -b $3 -c $3 '$0';" \
 		" sleep 5;\"", \
-		d, useragent, r, cookiefile, NULL \
+		d, useragent, r, cookiefile, downloadsdir, NULL \
 	} \
 }
 
+#define OPENBOOKMARK(p) { .v = (char *[]){ "/bin/sh", "-c", "openbm.sh $0 $1", winid, p, NULL } }
+#define SAVEBOOKMARK { .v = (char *[]){ "/bin/sh", "-c", "savebm.sh $0", winid, NULL } }
 #define MODKEY GDK_CONTROL_MASK
 
 /* hotkeys */
@@ -84,6 +87,8 @@ static Key keys[] = {
     { MODKEY,               GDK_g,      spawn,      SETPROP("_SURF_URI", "_SURF_GO") },
     { MODKEY,               GDK_f,      spawn,      SETPROP("_SURF_FIND", "_SURF_FIND") },
     { MODKEY,               GDK_slash,  spawn,      SETPROP("_SURF_FIND", "_SURF_FIND") },
+    { MODKEY|GDK_SHIFT_MASK,GDK_b,      spawn,      OPENBOOKMARK("_SURF_GO") },
+    { MODKEY               ,GDK_s,      spawn,      SAVEBOOKMARK },
 
     { MODKEY,               GDK_n,      find,       { .b = TRUE } },
     { MODKEY|GDK_SHIFT_MASK,GDK_n,      find,       { .b = FALSE } },
@@ -93,6 +98,6 @@ static Key keys[] = {
     { MODKEY|GDK_SHIFT_MASK,GDK_s,      toggle,     { .v = "enable-scripts" } },
     { MODKEY|GDK_SHIFT_MASK,GDK_v,      toggle,     { .v = "enable-plugins" } },
     { MODKEY|GDK_SHIFT_MASK,GDK_m,      togglestyle,{ 0 } },
-    { MODKEY|GDK_SHIFT_MASK,GDK_b,      togglescrollbars,{ 0 } },
+    { MODKEY|GDK_SHIFT_MASK,GDK_bar,    togglescrollbars,{ 0 } },
     { MODKEY|GDK_SHIFT_MASK,GDK_g,      togglegeolocation, { 0 } },
 };
