@@ -4,7 +4,7 @@ VERSION = 0.7
 # Customize below to fit your system
 
 # paths
-PREFIX = ${HOME}/.dwm
+PREFIX = ${HOME}
 MANPREFIX = ${PREFIX}/share/man
 
 X11INC = /usr/X11R6/include
