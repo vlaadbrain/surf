@@ -110,7 +110,6 @@ static Key keys[] = {
 
 static SearchEngine searchengines[] = {
 	{ "d",   "https://duckduckgo.com/html?q=%s"    },
-	{ "g",   "https://encrypted.google.com/search?q=%s"   },
 	{ "y",   "http://www.youtube.com/results?search_query=%s&aq=f"   },
 	{ "w",   "http://wikipedia.org/wiki/%s"   },
 };
