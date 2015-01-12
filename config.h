@@ -15,7 +15,7 @@ static gfloat zoomlevel = 0.95;       /* Default zoom level */
 
 /* Soup default features */
 static char *cookiefile     = "~/.surf/cookies.txt";
-static char *cookiepolicies = "Aa@"; /* A: accept all; a: accept nothing,
+static char *cookiepolicies = "@aA"; /* A: accept all; a: accept nothing,
                                         @: accept no third party */
 static char *cafile         = "/etc/ssl/certs/ca-certificates.crt";
 static char *strictssl      = FALSE; /* Refuse untrusted SSL connections */
@@ -106,6 +106,7 @@ static Key keys[] = {
     { MODKEY|GDK_SHIFT_MASK,GDK_m,      togglestyle,{ 0 } },
     { MODKEY|GDK_SHIFT_MASK,GDK_bar,    togglescrollbars,{ 0 } },
     { MODKEY|GDK_SHIFT_MASK,GDK_g,      togglegeolocation, { 0 } },
+	{ MODKEY|GDK_SHIFT_MASK,GDK_a,      togglecookiepolicy, { 0 } },
 };
 
 static SearchEngine searchengines[] = {
