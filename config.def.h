@@ -17,7 +17,7 @@ static gfloat zoomlevel = 1.0;       /* Default zoom level */
 /* Soup default features */
 static char *cookiefile     = "~/.surf/cookies.txt";
 static char *cookiepolicies = "Aa@"; /* A: accept all; a: accept nothing,
-                                      * @: accept no third party */
+                                      * @: accept all except third party */
 static char *cafile         = "/etc/ssl/certs/ca-certificates.crt";
 static Bool strictssl       = FALSE; /* Refuse untrusted SSL connections */
 static time_t sessiontime   = 3600;
