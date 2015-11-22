@@ -24,7 +24,6 @@
 #include <stdarg.h>
 #include <regex.h>
 #include <pwd.h>
-#include <string.h>
 
 #include "arg.h"
 
