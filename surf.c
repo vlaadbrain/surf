@@ -802,6 +802,7 @@ loadstatuschange(WebKitWebView *view, GParamSpec *pspec, Client *c)
 			               & SOUP_MESSAGE_CERTIFICATE_TRUSTED);
 		}
 		setatom(c, AtomUri, uri);
+		c->title = copystr(&c->title, uri);
 
 		if (enablestyle)
 			setstyle(c, getstyle(uri));
