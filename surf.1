@@ -283,6 +283,13 @@ string
 .TP
 .B http_proxy
 If this variable is set and not empty upon startup, surf will use it as the http proxy
+.TP
+.B no_proxy
+If both http_proxy is set and no_proxy contain a
+.BR comma-separated
+list of domain extensions and both is not empty upon startup, proxy will
+.BR not
+be used for each of the elements in no_proxy.
 .SH PLUGINS
 For using plugins in surf, first determine your running architecture. Then get
 the appropriate plugin for that architecture and copy it to
