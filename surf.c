@@ -17,7 +17,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <webkit/webkit.h>
-#include <glib/gstdio.h>
 #include <JavaScriptCore/JavaScript.h>
 #include <sys/file.h>
 #include <libgen.h>
@@ -25,8 +24,7 @@
 #include <regex.h>
 #include <pwd.h>
 #include <glib.h>
-#include <lib/gprintf.h>
-#include <gio/gio.h>
+#include <glib/gstdio.h>
 
 #include "arg.h"
 
