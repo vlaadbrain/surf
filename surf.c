@@ -197,6 +197,7 @@ static void scroll(GtkAdjustment *a, const Arg *arg);
 static void setatom(Client *c, int a, const char *v);
 static void setup(void);
 static void sigchld(int unused);
+static void sighup(int unused);
 static void source(Client *c, const Arg *arg);
 static void spawn(Client *c, const Arg *arg);
 static void stop(Client *c, const Arg *arg);
@@ -1300,6 +1301,8 @@ setup(void)
 
 	/* clean up any zombies immediately */
 	sigchld(0);
+	if (signal(SIGHUP, sighup) == SIG_ERR)
+		die("Can't install SIGHUP handler");
 	gtk_init(NULL, NULL);
 
 	dpy = GDK_DISPLAY();
@@ -1392,6 +1395,16 @@ sigchld(int unused)
 	if (signal(SIGCHLD, sigchld) == SIG_ERR)
 		die("Can't install SIGCHLD handler");
 	while (0 < waitpid(-1, NULL, WNOHANG));
+}
+
+void
+sighup(int unused)
+{
+	Arg a = { .b = FALSE };
+	Client *c;
+
+	for (c = clients; c; c = c->next)
+		reload(c, &a);
 }
 
 void
