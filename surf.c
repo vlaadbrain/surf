@@ -137,10 +137,10 @@ static WebKitWebView *createwindow(WebKitWebView *v, WebKitWebFrame *f,
                                    Client *c);
 static gboolean decidedownload(WebKitWebView *v, WebKitWebFrame *f,
                                WebKitNetworkRequest *r, gchar *m,
-			       WebKitWebPolicyDecision *p, Client *c);
+                               WebKitWebPolicyDecision *p, Client *c);
 static gboolean decidewindow(WebKitWebView *v, WebKitWebFrame *f,
                              WebKitNetworkRequest *r, WebKitWebNavigationAction
-			     *n, WebKitWebPolicyDecision *p, Client *c);
+                             *n, WebKitWebPolicyDecision *p, Client *c);
 static gboolean deletion_interface(WebKitWebView *view,
                                    WebKitDOMHTMLElement *arg1, Client *c);
 static void destroyclient(Client *c);
@@ -182,7 +182,7 @@ static void newwindow(Client *c, const Arg *arg, gboolean noembed);
 static void pasteuri(GtkClipboard *clipboard, const char *text, gpointer d);
 static gboolean contextmenu(WebKitWebView *view, GtkWidget *menu,
                             WebKitHitTestResult *target, gboolean keyboard,
-			    Client *c);
+                            Client *c);
 static void menuactivate(GtkMenuItem *item, Client *c);
 static void print(Client *c, const Arg *arg);
 static GdkFilterReturn processx(GdkXEvent *xevent, GdkEvent *event,
@@ -236,7 +236,7 @@ addaccelgroup(Client *c)
 void
 beforerequest(WebKitWebView *w, WebKitWebFrame *f, WebKitWebResource *r,
               WebKitNetworkRequest *req, WebKitNetworkResponse *resp,
-	      Client *c)
+              Client *c)
 {
 	const gchar *uri = webkit_network_request_get_uri(req);
 	int i, isascii = 1;
@@ -341,7 +341,7 @@ buttonrelease(WebKitWebView *web, GdkEventButton *e, Client *c)
 		    && CLEANMASK(e->state) == CLEANMASK(buttons[i].mask)
 		    && buttons[i].func) {
 			buttons[i].func(c, buttons[i].click == ClkLink
-			    && buttons[i].arg.i == 0 ? &arg : &buttons[i].arg);
+			                && buttons[i].arg.i == 0 ? &arg : &buttons[i].arg);
 			return true;
 		}
 	}
@@ -373,7 +373,7 @@ cookiejar_changed(SoupCookieJar *self, SoupCookie *old_cookie,
 	}
 	SOUP_COOKIE_JAR_CLASS(cookiejar_parent_class)->changed(self,
 	                                                       old_cookie,
-							       new_cookie);
+	                                                       new_cookie);
 	flock(COOKIEJAR(self)->lock, LOCK_UN);
 }
 
@@ -407,8 +407,8 @@ cookiejar_new(const char *filename, gboolean read_only,
 {
 	return g_object_new(COOKIEJAR_TYPE,
 	                    SOUP_COOKIE_JAR_TEXT_FILENAME, filename,
-			    SOUP_COOKIE_JAR_READ_ONLY, read_only,
-			    SOUP_COOKIE_JAR_ACCEPT_POLICY, policy, NULL);
+	                    SOUP_COOKIE_JAR_READ_ONLY, read_only,
+	                    SOUP_COOKIE_JAR_ACCEPT_POLICY, policy, NULL);
 }
 
 void
@@ -529,7 +529,7 @@ decidedownload(WebKitWebView *v, WebKitWebFrame *f, WebKitNetworkRequest *r,
 gboolean
 decidewindow(WebKitWebView *view, WebKitWebFrame *f, WebKitNetworkRequest *r,
              WebKitWebNavigationAction *n, WebKitWebPolicyDecision *p,
-	     Client *c)
+             Client *c)
 {
 	Arg arg;
 
@@ -802,7 +802,7 @@ loadstatuschange(WebKitWebView *view, GParamSpec *pspec, Client *c)
 			request = webkit_web_data_source_get_request(src);
 			msg = webkit_network_request_get_message(request);
 			c->sslfailed = !(soup_message_get_flags(msg)
-			               & SOUP_MESSAGE_CERTIFICATE_TRUSTED);
+			                 & SOUP_MESSAGE_CERTIFICATE_TRUSTED);
 		}
 		setatom(c, AtomUri, uri);
 		c->title = copystr(&c->title, uri);
@@ -905,10 +905,10 @@ newclient(void)
 	gtk_window_set_default_size(GTK_WINDOW(c->win), 800, 600);
 	g_signal_connect(G_OBJECT(c->win),
 	                 "destroy",
-			 G_CALLBACK(destroywin), c);
+	                 G_CALLBACK(destroywin), c);
 	g_signal_connect(G_OBJECT(c->win),
 	                 "leave_notify_event",
-			 G_CALLBACK(titlechangeleave), c);
+	                 G_CALLBACK(titlechangeleave), c);
 
 	if (!kioskmode)
 		addaccelgroup(c);
@@ -925,46 +925,46 @@ newclient(void)
 
 	g_signal_connect(G_OBJECT(c->view),
 	                 "notify::title",
-			 G_CALLBACK(titlechange), c);
+	                 G_CALLBACK(titlechange), c);
 	g_signal_connect(G_OBJECT(c->view),
 	                 "hovering-over-link",
-			 G_CALLBACK(linkhover), c);
+	                 G_CALLBACK(linkhover), c);
 	g_signal_connect(G_OBJECT(c->view),
 	                 "geolocation-policy-decision-requested",
-			 G_CALLBACK(geopolicyrequested), c);
+	                 G_CALLBACK(geopolicyrequested), c);
 	g_signal_connect(G_OBJECT(c->view),
 	                 "create-web-view",
-			 G_CALLBACK(createwindow), c);
+	                 G_CALLBACK(createwindow), c);
 	g_signal_connect(G_OBJECT(c->view),
 	                 "new-window-policy-decision-requested",
-			 G_CALLBACK(decidewindow), c);
+	                 G_CALLBACK(decidewindow), c);
 	g_signal_connect(G_OBJECT(c->view),
 	                 "mime-type-policy-decision-requested",
-			 G_CALLBACK(decidedownload), c);
+	                 G_CALLBACK(decidedownload), c);
 	g_signal_connect(G_OBJECT(c->view),
 	                 "window-object-cleared",
-			 G_CALLBACK(windowobjectcleared), c);
+	                 G_CALLBACK(windowobjectcleared), c);
 	g_signal_connect(G_OBJECT(c->view),
 	                 "notify::load-status",
-			 G_CALLBACK(loadstatuschange), c);
+	                 G_CALLBACK(loadstatuschange), c);
 	g_signal_connect(G_OBJECT(c->view),
 	                 "notify::progress",
-			 G_CALLBACK(progresschange), c);
+	                 G_CALLBACK(progresschange), c);
 	g_signal_connect(G_OBJECT(c->view),
 	                 "download-requested",
-			 G_CALLBACK(initdownload), c);
+	                 G_CALLBACK(initdownload), c);
 	g_signal_connect(G_OBJECT(c->view),
 	                 "button-release-event",
-			 G_CALLBACK(buttonrelease), c);
+	                 G_CALLBACK(buttonrelease), c);
 	g_signal_connect(G_OBJECT(c->view),
 	                 "context-menu",
-			 G_CALLBACK(contextmenu), c);
+	                 G_CALLBACK(contextmenu), c);
 	g_signal_connect(G_OBJECT(c->view),
 	                 "resource-request-starting",
-			 G_CALLBACK(beforerequest), c);
+	                 G_CALLBACK(beforerequest), c);
 	g_signal_connect(G_OBJECT(c->view),
 	                 "should-show-delete-interface-for-element",
-			 G_CALLBACK(deletion_interface), c);
+	                 G_CALLBACK(deletion_interface), c);
 
 	/* Scrolled Window */
 	c->scroll = gtk_scrolled_window_new(NULL, NULL);
@@ -976,11 +976,11 @@ newclient(void)
 	if (!enablescrollbars) {
 		gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(c->scroll),
 		                               GTK_POLICY_NEVER,
-					       GTK_POLICY_NEVER);
+		                               GTK_POLICY_NEVER);
 	} else {
 		gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(c->scroll),
 		                               GTK_POLICY_AUTOMATIC,
-					       GTK_POLICY_AUTOMATIC);
+		                               GTK_POLICY_AUTOMATIC);
 	}
 
 	/* Arranging */
@@ -1016,7 +1016,7 @@ newclient(void)
 	g_object_set(G_OBJECT(settings),
 	             "enable-scripts", enablescripts, NULL);
 	g_object_set(G_OBJECT(settings),
-		     "enable-spatial-navigation", enablespatialbrowsing, NULL);
+	             "enable-spatial-navigation", enablespatialbrowsing, NULL);
 	g_object_set(G_OBJECT(settings),
 	             "enable-developer-extras", enableinspector, NULL);
 	g_object_set(G_OBJECT(settings),
@@ -1075,9 +1075,8 @@ newclient(void)
 		printf("%u\n",
 		       (guint)GDK_WINDOW_XID(GTK_WIDGET(c->win)->window));
 		fflush(NULL);
-                if (fclose(stdout) != 0) {
+		if (fclose(stdout) != 0)
 			die("Error closing stdout");
-                }
 	}
 
 	return c;
@@ -1201,12 +1200,10 @@ processx(GdkXEvent *e, GdkEvent *event, gpointer d)
 			if (ev->atom == atoms[AtomFind]) {
 				arg.b = TRUE;
 				find(c, &arg);
-
 				return GDK_FILTER_REMOVE;
 			} else if (ev->atom == atoms[AtomGo]) {
 				arg.v = getatom(c, AtomGo);
 				loaduri(c, &arg);
-
 				return GDK_FILTER_REMOVE;
 			}
 		}
@@ -1372,7 +1369,7 @@ setup(void)
 	/* proxy */
 	if ((proxy = getenv("http_proxy")) && strcmp(proxy, "")) {
 		new_proxy = g_strrstr(proxy, "http://")
-			    || g_strrstr(proxy, "https://")
+		            || g_strrstr(proxy, "https://")
 		            || g_strrstr(proxy, "socks://")
 		            || g_strrstr(proxy, "socks4://")
 		            || g_strrstr(proxy, "socks4a://")
@@ -1380,7 +1377,7 @@ setup(void)
 		            ? g_strdup(proxy)
 		            : g_strdup_printf("http://%s", proxy);
 		new_no_proxy = ((no_proxy = getenv("no_proxy")) && strcmp(no_proxy, ""))
-			? g_strsplit(no_proxy, ",", -1) : NULL;
+		               ? g_strsplit(no_proxy, ",", -1) : NULL;
 		pr = g_simple_proxy_resolver_new(new_proxy, new_no_proxy);
 		g_object_set(G_OBJECT(s), "proxy-resolver", pr, NULL);
 		g_free(new_proxy);
@@ -1539,11 +1536,11 @@ togglescrollbars(Client *c, const Arg *arg)
 	if (vspolicy == GTK_POLICY_AUTOMATIC) {
 		gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(c->scroll),
 		                               GTK_POLICY_NEVER,
-					       GTK_POLICY_NEVER);
+		                               GTK_POLICY_NEVER);
 	} else {
 		gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(c->scroll),
 		                               GTK_POLICY_AUTOMATIC,
-					       GTK_POLICY_AUTOMATIC);
+		                               GTK_POLICY_AUTOMATIC);
 		a.i = +1;
 		twitch(c, &a);
 		a.i = -1;
@@ -1556,7 +1553,6 @@ togglestyle(Client *c, const Arg *arg)
 {
 	enablestyle = !enablestyle;
 	setstyle(c, enablestyle ? getstyle(geturi(c)) : "");
-
 	updatetitle(c);
 }
 
