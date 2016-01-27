@@ -840,7 +840,7 @@ loaduri(Client *c, const Arg *arg)
 		u = g_strdup_printf("file://%s", rp);
 		free(rp);
 	} else {
-		u = g_strrstr(uri, "://") ? g_strdup(uri)
+		u = g_strrstr(uri, "://") || g_str_has_prefix(uri, "about:") ? g_strdup(uri)
 		    : g_strdup_printf("http://%s", uri);
 	}
 
