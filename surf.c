@@ -333,10 +333,11 @@ buildpath(const char *path)
 			p = (char *)&path[1];
 			homedir = getcurrentuserhomedir();
 		} else {
-			if ((p = strchr(path, '/')))
+			if ((p = strchr(path, '/'))) {
 				name = g_strndup(&path[1], --p - path);
-			else
+			} else {
 				name = g_strdup(&path[1]);
+			}
 
 			homedir = getuserhomedir(name);
 			g_free(name);
