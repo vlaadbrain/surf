@@ -198,6 +198,7 @@ static void scroll_v(Client *c, const Arg *arg);
 static void scroll(GtkAdjustment *a, const Arg *arg);
 static void setatom(Client *c, int a, const char *v);
 static void setup(void);
+static void setup_proxy(void);
 static void sigchld(int unused);
 static void sighup(int unused);
 static void source(Client *c, const Arg *arg);
@@ -208,6 +209,7 @@ static void titlechangeleave(void *a, void *b, Client *c);
 static void toggle(Client *c, const Arg *arg);
 static void togglecookiepolicy(Client *c, const Arg *arg);
 static void togglegeolocation(Client *c, const Arg *arg);
+static void toggleproxy(Client *c, const Arg *arg);
 static void togglescrollbars(Client *c, const Arg *arg);
 static void togglestyle(Client *c, const Arg *arg);
 static void updatetitle(Client *c);
@@ -1323,7 +1325,6 @@ void
 setup(void)
 {
 	int i;
-	char *proxy, *new_proxy, *no_proxy, **new_no_proxy;
 	char *styledirfile, *stylepath;
 	GProxyResolver *pr;
 	SoupSession *s;
@@ -1399,6 +1400,19 @@ setup(void)
 	g_object_set(G_OBJECT(s), "tls-database", tlsdb, NULL);
 	g_object_set(G_OBJECT(s), "ssl-strict", strictssl, NULL);
 
+	setup_proxy();
+}
+
+void
+setup_proxy(void)
+{
+	char *proxy, *new_proxy, *no_proxy, **new_no_proxy;
+	GProxyResolver *pr;
+	SoupSession *s;
+
+	/* request handler */
+	s = webkit_get_default_session();
+
 	/* proxy */
 	if ((proxy = getenv("http_proxy")) && strcmp(proxy, "")) {
 		new_proxy = g_strrstr(proxy, "http://")
@@ -1416,6 +1430,8 @@ setup(void)
 		g_free(new_proxy);
 		g_strfreev(new_no_proxy);
 		usingproxy = 1;
+	} else {
+		usingproxy = 0;
 	}
 }
 
@@ -1480,6 +1496,7 @@ void
 titlechange(WebKitWebView *view, GParamSpec *pspec, Client *c)
 {
 	const gchar *t = webkit_web_view_get_title(view);
+
 	if (t) {
 		c->title = copystr(&c->title, t);
 		updatetitle(c);
@@ -1555,6 +1572,25 @@ twitch(Client *c, const Arg *arg)
 	v = MIN(v, gtk_adjustment_get_upper(a) -
 	        gtk_adjustment_get_page_size(a));
 	gtk_adjustment_set_value(a, v);
+}
+
+void
+toggleproxy(Client *c, const Arg *arg)
+{
+	SoupSession *s;
+
+	/* request handler */
+	s = webkit_get_default_session();
+
+	if (usingproxy) {
+		g_object_set(G_OBJECT(s), "proxy-resolver", NULL, NULL);
+		usingproxy = 0;
+	} else {
+		setup_proxy();
+	}
+
+	updatetitle(c);
+	/* Do not reload. */
 }
 
 void

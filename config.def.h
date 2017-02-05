@@ -127,6 +127,7 @@ static Key keys[] = {
 	{ MODKEY|GDK_SHIFT_MASK,GDK_m,      togglestyle, { 0 } },
 	{ MODKEY|GDK_SHIFT_MASK,GDK_b,      togglescrollbars, { 0 } },
 	{ MODKEY|GDK_SHIFT_MASK,GDK_g,      togglegeolocation, { 0 } },
+	{ MODKEY|GDK_SHIFT_MASK,GDK_y,      toggleproxy, { 0 } },
 };
 
 /* button definitions */
@@ -139,3 +140,4 @@ static Button buttons[] = {
 	{ ClkAny,       0,          8,      navigate,       { .i = -1 } },
 	{ ClkAny,       0,          9,      navigate,       { .i = +1 } },
 };
+
