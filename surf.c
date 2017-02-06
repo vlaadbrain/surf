@@ -198,7 +198,6 @@ static void scroll_v(Client *c, const Arg *arg);
 static void scroll(GtkAdjustment *a, const Arg *arg);
 static void setatom(Client *c, int a, const char *v);
 static void setup(void);
-static void setup_proxy(void);
 static void sigchld(int unused);
 static void sighup(int unused);
 static void source(Client *c, const Arg *arg);
@@ -1326,7 +1325,6 @@ setup(void)
 {
 	int i;
 	char *styledirfile, *stylepath;
-	GProxyResolver *pr;
 	SoupSession *s;
 	GError *error = NULL;
 
@@ -1400,39 +1398,7 @@ setup(void)
 	g_object_set(G_OBJECT(s), "tls-database", tlsdb, NULL);
 	g_object_set(G_OBJECT(s), "ssl-strict", strictssl, NULL);
 
-	setup_proxy();
-}
-
-void
-setup_proxy(void)
-{
-	char *proxy, *new_proxy, *no_proxy, **new_no_proxy;
-	GProxyResolver *pr;
-	SoupSession *s;
-
-	/* request handler */
-	s = webkit_get_default_session();
-
-	/* proxy */
-	if ((proxy = getenv("http_proxy")) && strcmp(proxy, "")) {
-		new_proxy = g_strrstr(proxy, "http://")
-		            || g_strrstr(proxy, "https://")
-		            || g_strrstr(proxy, "socks://")
-		            || g_strrstr(proxy, "socks4://")
-		            || g_strrstr(proxy, "socks4a://")
-		            || g_strrstr(proxy, "socks5://")
-		            ? g_strdup(proxy)
-		            : g_strdup_printf("http://%s", proxy);
-		new_no_proxy = ((no_proxy = getenv("no_proxy")) && strcmp(no_proxy, ""))
-		               ? g_strsplit(no_proxy, ",", -1) : NULL;
-		pr = g_simple_proxy_resolver_new(new_proxy, new_no_proxy);
-		g_object_set(G_OBJECT(s), "proxy-resolver", pr, NULL);
-		g_free(new_proxy);
-		g_strfreev(new_no_proxy);
-		usingproxy = 1;
-	} else {
-		usingproxy = 0;
-	}
+	toggleproxy(NULL, NULL);
 }
 
 void
@@ -1577,6 +1543,8 @@ twitch(Client *c, const Arg *arg)
 void
 toggleproxy(Client *c, const Arg *arg)
 {
+	char *proxy, *new_proxy, *no_proxy, **new_no_proxy;
+	GProxyResolver *pr;
 	SoupSession *s;
 
 	/* request handler */
@@ -1585,11 +1553,26 @@ toggleproxy(Client *c, const Arg *arg)
 	if (usingproxy) {
 		g_object_set(G_OBJECT(s), "proxy-resolver", NULL, NULL);
 		usingproxy = 0;
-	} else {
-		setup_proxy();
+	} else if ((proxy = getenv("http_proxy")) && strcmp(proxy, "")) {
+		new_proxy = g_strrstr(proxy, "http://")
+		            || g_strrstr(proxy, "https://")
+		            || g_strrstr(proxy, "socks://")
+		            || g_strrstr(proxy, "socks4://")
+		            || g_strrstr(proxy, "socks4a://")
+		            || g_strrstr(proxy, "socks5://")
+		            ? g_strdup(proxy)
+		            : g_strdup_printf("http://%s", proxy);
+		new_no_proxy = ((no_proxy = getenv("no_proxy")) && strcmp(no_proxy, ""))
+		               ? g_strsplit(no_proxy, ",", -1) : NULL;
+		pr = g_simple_proxy_resolver_new(new_proxy, new_no_proxy);
+		g_object_set(G_OBJECT(s), "proxy-resolver", pr, NULL);
+		g_free(new_proxy);
+		g_strfreev(new_no_proxy);
+		usingproxy = 1;
 	}
 
-	updatetitle(c);
+	if (c)
+		updatetitle(c);
 	/* Do not reload. */
 }
 
